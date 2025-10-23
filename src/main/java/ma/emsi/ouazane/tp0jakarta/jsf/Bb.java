@@ -115,26 +115,32 @@ public class Bb implements Serializable {
      */
     public String envoyer() {
         if (question == null || question.isBlank()) {
-            // Erreur ! Le formulaire va être réaffiché en réponse à la requête POST, avec un message d'erreur.
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Texte question vide", "Il manque le texte de la question");
             facesContext.addMessage(null, message);
             return null;
         }
-        // Entourer la réponse avec "||".
-        this.reponse = "||";
-        // Si la conversation n'a pas encore commencé, ajouter le rôle système au début de la réponse
+
         if (this.conversation.isEmpty()) {
-            // Ajouter le rôle système au début de la réponse
-            this.reponse += roleSysteme.toUpperCase(Locale.FRENCH) + "\n";
-            // Invalide le bouton pour changer le rôle système
+            this.reponse = "== " + roleSysteme.toUpperCase(Locale.FRENCH) + " ==\n";
             this.roleSystemeChangeable = false;
+        } else {
+            this.reponse = "";
         }
-        this.reponse += question.toLowerCase(Locale.FRENCH) + "||";
-        // La conversation contient l'historique des questions-réponses depuis le début.
+
+        // Traitement personnalisé : réponse motivante
+        if (question.toLowerCase(Locale.FRENCH).contains("travail")) {
+            this.reponse += "Reste motivé ! Chaque petit progrès compte 💪";
+        } else if (question.toLowerCase(Locale.FRENCH).contains("étude")) {
+            this.reponse += "Continue à apprendre, tu es sur la bonne voie 📚";
+        } else {
+            this.reponse += "Bonne question ! Garde ton énergie positive ✨";
+        }
+
         afficherConversation();
         return null;
     }
+
 
     /**
      * Pour un nouveau chat.
